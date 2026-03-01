@@ -4,6 +4,9 @@
 
 data source: https://odap-ico.github.io/PRS_tutorial/#whats-a-polygenic-risk-score
 
+### Background
+Colorectal cancer (CRC) is the third most diagnosed cancer in the world and accounted for 9.4% of cancer-related deaths in 2020. It is estimated that the global incidence of CRC will more than double by 2035. CRC occurs exclusively in the colon or rectum. Currently, the most effective method of preventing and managing CRC is screening average-risk individuals. Current known CRC risk factors include family history of CRC, inflammatory bowel diseases, obesity, smoking, consumption of red meats, alcohol consumption, and tobacco use. Over two hundred single-nucleotide polymorphisms (SNPs) have been implicated as causal or protective for CRC. In this study, we aim to build a polygenic risk score (PRS) for CRC and compare its discrimination with that of machine learning (ML) models to identify patients with CRC.
+
 ### Dataset & Preprocessing
 This study employs a case–control design to evaluate the performance of a PRS for CRC. Publicly available data from the GitHub repository (https://github.com/odap-ico/PRS_tutorial) will be used. The dataset includes individual-level genotype data in VCF format, effect size estimates for 205 single-nucleotide polymorphisms (SNPs) associated with CRC, and phenotype labels for 486 CRC cases and 3,783 controls. Data preprocessing will include the removal of duplicate SNPs, filtering variants with low minor allele frequency, and the use of LD-clumping to choose a set **𝑆**of independent SNPs with strong signals. Quality control and data preparation will be performed using PLINK and R, while genotype extraction from VCF files will be conducted using the PyVCF Python package.
 
