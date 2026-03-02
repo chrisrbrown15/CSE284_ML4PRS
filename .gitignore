@@ -1,3 +1,4 @@
-tools/plink2/plink2
-tools/plink2/vcf_subset
-tools/bcftools/bcftools-1.23
+tools/plink2/*
+!tools/plink2/.gitkeep
+tools/bcftools/*
+!tools/bcftools/.gitkeep
