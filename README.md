@@ -18,5 +18,5 @@ The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for e
 
 ### Requirements
 
-plink2 binary appropriate for your processor architecture must be placed in tools/plink2/ directory.
-bcftools-1.23 must be in tools/bcftools
+[plink2](https://www.cog-genomics.org/plink/2.0/) binary appropriate for your processor architecture must be placed in tools/plink2/ directory.
+make [bcftool-1.23](https://www.htslib.org/download/) into tools/bcftools. Executable should be at tools/bcftools/bin/bcftools
