@@ -1,3 +1,4 @@
+from Bio import bgzf
 import gzip
 import os
 import numpy as np
@@ -15,7 +16,7 @@ def process_headers(input: str, output: str):
     headers = []
     print("processing headers")
     # get headers
-    with gzip.open(input, 'rt', encoding='utf-8') as f:
+    with gzip.open(input, 'rt') as f:
         for line in f:
             if line.startswith("##"):
                 headers.append(line)
@@ -23,7 +24,7 @@ def process_headers(input: str, output: str):
                 break
 
     # write out to output
-    with gzip.open(output, 'wt', encoding='utf-8') as f:
+    with bgzf.open(output, 'wt') as f:
         for line in headers:
             f.write(line)
 
@@ -38,7 +39,7 @@ def process_rows(input: str, output: str):
     print(f"processing rows")
     # find all columns where there are two '|' within a single field or no '|'
     del_cols = set()
-    with gzip.open(input, 'rt', encoding='utf-8') as f:
+    with gzip.open(input, 'rt') as f:
         for line in f:
             # skip headers
             if line.startswith("##"):
@@ -57,7 +58,7 @@ def process_rows(input: str, output: str):
     print(f"Removing {len(del_cols)} sample columns which are not formated properly for at least 1 SNP")
 
     lines = []
-    with gzip.open(input, 'rt', encoding='utf-8') as f:
+    with gzip.open(input, 'rt') as f:
         for line in f:
             # skip headers
             if line.startswith("#"):
@@ -80,7 +81,7 @@ def process_rows(input: str, output: str):
     new_header = [col for idx, col in enumerate(headers) if idx not in del_cols]
 
     # write out to output
-    with gzip.open(output, 'at', encoding='utf-8') as f:
+    with bgzf.open(output, 'at') as f:
         f.write('\t'.join(new_header) + '\n')
         for line in lines:
             f.write(line)
@@ -100,6 +101,7 @@ def main(in_vcf: str, out_vcf: str):
     """
     process_headers(in_vcf, out_vcf)
     process_rows(in_vcf, out_vcf)
+    os.system(f"tabix -p vcf {OUTPUT}")
     return
 
 if __name__ == "__main__":
