@@ -2,4 +2,6 @@ tools/plink2/*
 !tools/plink2/.gitkeep
 tools/bcftools/*
 !tools/bcftools/.gitkeep
+
 .Rproj.user
+*.vscode

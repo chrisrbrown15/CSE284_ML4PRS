@@ -4,6 +4,12 @@ output: html_document
 date: "2026-03-03"
 ---
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
 ```{r}
 library(tidyverse)
 library(data.table)
@@ -11,9 +17,6 @@ library(data.table)
 
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## R Markdown
 
