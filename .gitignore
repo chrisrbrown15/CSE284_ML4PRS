@@ -3,5 +3,7 @@ tools/plink2/*
 tools/bcftools/*
 !tools/bcftools/.gitkeep
 
+.Rhistory
+.RData
 .Rproj.user
 *.vscode
