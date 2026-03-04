@@ -292,6 +292,9 @@ scores$SCORE1_AVG_scale <- scale(scores$SCORE1_AVG, center = T, scale = T)
 ```{r merge score with sample type}
 scores_samples<-merge(scores,samples,by.x="IID",by.y="ID",all=FALSE)
 
+write.table(scores_samples,here("results","PRS","4_PRS_calculation","score_final_w_labels.txt"), sep = "\t", col.names = T, quote = F, row.names = F)
+
+
 ```
 
 ```{r}
