@@ -1,0 +1,33 @@
+PLINK v2.0.0-a.7 64-bit (28 Feb 2026)
+Options in effect:
+  --freq
+  --make-pgen
+  --new-id-max-allele-len 50
+  --out results/PRS/1_snps_extraction/raw_data
+  --set-all-var-ids @:#_$r_$a
+  --vcf data/processed/GenRisk_all_CRC_SNPs_perm.clean.vcf.gz
+
+Hostname: DESKTOP-Q6KBG6N
+Working directory: C:\Users\Zaid\Documents\CSE284_ML4PRS
+Start time: Mon Mar 02 23:59:01 2026
+
+Random number seed: 1772524741
+11615 MiB RAM detected; reserving 5807 MiB for main workspace.
+Using up to 4 compute threads.
+--vcf: 205 variants scanned.
+--vcf: results/PRS/1_snps_extraction/raw_data-temporary.pgen +
+results/PRS/1_snps_extraction/raw_data-temporary.pvar.zst +
+results/PRS/1_snps_extraction/raw_data-temporary.psam written.
+4104 samples (0 females, 0 males, 4104 ambiguous; 4104 founders) loaded from
+results/PRS/1_snps_extraction/raw_data-temporary.psam.
+205 variants loaded from
+results/PRS/1_snps_extraction/raw_data-temporary.pvar.zst.
+Note: No phenotype data present.
+Calculating allele frequencies... done.
+--freq: Allele frequencies (founders only) written to
+results/PRS/1_snps_extraction/raw_data.afreq .
+Writing results/PRS/1_snps_extraction/raw_data.psam ... done.
+Writing results/PRS/1_snps_extraction/raw_data.pvar ... done.
+Writing results/PRS/1_snps_extraction/raw_data.pgen ... done.
+
+End time: Mon Mar 02 23:59:01 2026

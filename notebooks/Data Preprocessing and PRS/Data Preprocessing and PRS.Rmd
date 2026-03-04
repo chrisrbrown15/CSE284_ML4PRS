@@ -10,30 +10,344 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
-library(tidyverse)
+```{r Load libraries}
 library(data.table)
+library(readxl)
+library(here)
+library(tidyverse)
+```
+
+
+```{r Load data}
+
+#Load SNP data
+CRC_SNP <- read_excel(here("data","raw","1_CRC_SNPs_list_205_Nature_2023.xlsx"))
+
+#Load VCF
+data <- read_tsv(here("data","processed","GenRisk_all_CRC_SNPs_perm.clean.vcf"), skip=50)
+
+#Lad samples phenotypes
+samples<-read.table(here("data","raw","GenRisk_ImputedData_CRC_Samples.txt"),header=TRUE,stringsAsFactors=FALSE,sep="\t")
+```
+
+
+```{r PLINK2 conversion}
+
+#Convert VCF to PLINK2 format
+mkdir -p results/PRS/1_snps_extraction 
+
+plink2 --vcf data/processed/GenRisk_all_CRC_SNPs_perm.clean.vcf.gz \
+--new-id-max-allele-len 50 \
+--set-all-var-ids @:#_\$r_\$a \
+--freq \
+--make-pgen \
+--out results/PRS/1_snps_extraction/raw_data
+
+
+```
+
+SNP Alignment 
+
+```{r Load Data}
+
+# Load PVAR data of PLINK
+pvar<-fread(here("results","PRS","1_snps_extraction","raw_data.pvar"))
+
+#Change column names
+colnames(pvar)<- c("CHR",   "POS",  "ID"    ,"REF", "ALT",  "FILTER",   "INFO")
+
+```
+
+
+```{r Missing SNPs}
+
+#Create the same variant name for CRC SNPs and pvar use choromosome:position
+CRC_SNP$id_pos <- paste0(CRC_SNP$CHR,":",CRC_SNP$`POS (GRCh37)`)
+pvar$id_pos <- paste0(pvar$CHR,":",pvar$POS)
+
+#Find SNPs that dont have beta values
+snpsNOTpvar<-CRC_SNP[!(CRC_SNP$id_pos %in% pvar$id_pos), ]
+```
+
+
+```{r Duplicated SNPs}
+
+#Get duplicated position values
+multi_all <- pvar[duplicated(pvar$POS) | duplicated(pvar$POS, fromLast = TRUE), ]
+
+#Identify duplicated SNP to remove
+CRC_SNP$ID <- gsub("/","_",CRC_SNP$VARIANT)
+id_multi <- multi_all[!multi_all$ID %in% CRC_SNP$ID,] 
+id_multi_to_remove <- id_multi[,c(1,3:5)]
+
+dir.create(here("results","PRS","2_SNPs_alignament_check"))
+write.table(id_multi_to_remove,here("results","PRS","2_SNPs_alignament_check","multi_to_remove.txt"), col.names = F, row.names = F, quote = F)
+
+```
+
+
+```{r Missing SNPs}
+
+## SNPs that have not been extracted: 
+no_snps <- CRC_SNP[!CRC_SNP$ID %in% pvar$ID,]
+
+```
+
+
+```{r Ambiguous SNPs}
+
+#Load SNPs frequencies
+freq<-read.table(here("results","PRS","1_snps_extraction","raw_data.afreq"),header=F,sep="\t")
+colnames(freq)<- c("CHROM", "ID",   "REF",  "ALT",  "ALT_FREQS",    "OBS_CT")
+
+ambiguous_snps <- freq[freq$ALT_FREQS > 0.4 & freq$ALT_FREQS< 0.6 & 
+                        ((freq$REF == "A" & freq$ALT == "T") | 
+                         (freq$ALT == "T" & freq$REF == "A") | 
+                         (freq$REF == "C" & freq$ALT == "G") | 
+                         (freq$ALT == "G" & freq$REF == "C")), ]
+
+
+write.table(ambiguous_snps, here("results","PRS","2_SNPs_alignament_check","exclrsIDs_ambiguous.txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+
+```
+
+
+```{r Imputation information score (INFO)}
+
+# Create column R2
+pvar$INFO2 <- sub("ER2=.*", "", pvar$INFO)
+pvar$R2 <- as.numeric(sub('.*R2=([0-9.]+);.*', '\\1', pvar$INFO2))
+
+# Extraction of SNPs with low INFO:
+r2_04_remove <- pvar[pvar$R2 < 0.4,]
+r2_04_remove
+
+```
+
+
+```{r}
+mkdir -p results/PRS/3_QC
+
+plink2 \
+    --pfile results/PRS/1_snps_extraction/raw_data \
+    --indep-pairwise 200 1 0.3 \
+    --out results/PRS/3_QC/LD
+```
+
+```{r Load LD exclusion SNPs}
+
+ld_snps <- read.table(here("results","PRS","3_QC","LD.prune.out"),header=F,sep="\t")
+ld_snps <- ld_snps$V1
+
+```
+
+
+```{r}
+
+plink2 \
+    --pfile results/PRS/1_snps_extraction/raw_data \
+    --hwe 1e-6 \
+    --write-snplist \
+    --out results/PRS/3_QC/HWE_QC
+
+```
+
+
+```{r QC Exclusion}
+
+multi_remove <-read.table(here("results","PRS","2_SNPs_alignament_check","multi_to_remove.txt"), colClasses = c("character"))
+colnames(multi_remove) <- c("CHROM", "ID", "REF", "ALT")
+
+# The ID columns are selected
+ambiguous_snps_ID <- ambiguous_snps$ID
+r2_04_remove_ID <- r2_04_remove$ID
+multi_remove_ID  <- multi_remove$ID
+
+to_remove <- unique(c(ambiguous_snps_ID,multi_remove_ID,r2_04_remove_ID,ld_snps))
+
+write.table(to_remove, here("results","PRS","3_QC","to_remove.txt"), quote = FALSE, row.names = FALSE, col.names = F)
+
+
 ```
 
 
 
+```{r Filtering of SNPs with PLINK2}
 
-## R Markdown
+plink2 \
+--pfile  results/PRS/1_snps_extraction/raw_data \
+--exclude results/PRS/3_QC/to_remove.txt \
+--maf 0.005 \
+--write-snplist \
+--make-pgen \
+--out results/PRS/3_QC/dataQC
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+PRS Calculation
+```{r PRS calculation}
 
-You can also embed plots, for example:
+# Load Info SNPs resultants del QC
+snps_qc<-read.table(here("results","PRS","3_QC","dataQC.pvar"))
+colnames(snps_qc) <- c("CHROM", "POS",  "ID", "REF", "ALT", "FILTER", "INFO")
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#Transform ID to: chr:position_all_1:all_2 format
+#snps_qc$ID <- gsub("_",":",snps_qc$ID)
+
+#Keep ID and ALT / RISK_ALLELE
+names(snps_qc)[names(snps_qc) == "ALT"] <- "RISK_ALLELE"
+names(snps_qc)[names(snps_qc) == "REF"] <- "OTHER_ALLELE"
+snps_qc <- snps_qc[,c("ID", "RISK_ALLELE","OTHER_ALLELE" )]
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r Load beta values}
+
+# Load beta values.
+betas <- read_excel(here("data","raw","1_CRC_SNPs_list_205_Nature_2023.xlsx"))
+
+#Transform ID to: chr:position_all_1:all_2 format -> 1:110365045_A_G
+names(betas)[names(betas) == "VARIANT"] <- "ID"
+names(betas)[names(betas) == "BETA"] <- "RISK_SCORE"
+#betas$ID <- gsub("_",":",betas$ID)
+betas$ID <- gsub("/","_",betas$ID)
+
+betas <- betas[,c(3,7)]
+```
+
+```{r Merge values}
+
+score <- merge(snps_qc, betas, by = "ID", all.x = TRUE)
+
+```
+
+```{r Make beta values positive}
+
+score$RISK_ALLELE_2 <- score$RISK_ALLELE
+#Change Risk_allele <-> Other_allele in the negative beta values cases:
+for (i in 1:nrow(score)){
+      
+    # iterate over the column nº4 ("RISK_SCORE")  and check if <0
+    if(score[i,4]<0){
+           
+        # replace the value with OTHER_ALLELE (column 3) in the new column RISK_ALLEL_2 (5)
+        score[i,5]<- score[i,3]
+        }
+}
+
+#Change beta value sign - to -> +
+score$RISK_SCORE_2 <- as.numeric(gsub("-", "",score$RISK_SCORE ))
+
+
+#Delete some columns
+score[,2:4] <- NULL
+```
+
+
+
+```{r}
+
+#Save the new score doc as score_final.txt 
+
+dir.create(here("results","PRS","4_PRS_calculation"),recursive = TRUE)
+
+write.table(score,here("results","PRS","4_PRS_calculation","score_final.txt"), col.names = F, quote = F, row.names = F)
+
+```
+
+
+```{r}
+
+#Generate PRS using PLINK
+plink2 \
+--pfile results/PRS/1_snps_extraction/raw_data \
+--extract results/PRS/3_QC/dataQC.snplist \
+--score results/PRS/4_PRS_calculation/score_final.txt no-mean-imputation \
+--out results/PRS/4_PRS_calculation/PRS
+
+#Generate effect allele count per SNP per subject
+plink2 \
+  --pfile results/PRS/1_snps_extraction/raw_data \
+  --extract results/PRS/3_QC/dataQC.snplist \
+  --a1-allele results/PRS/4_PRS_calculation/score_final.txt 1 2 \
+  --export A \
+  --out results/PRS/4_PRS_calculation/effect_allele_counts
+
+```
+
+PRS Data loading
+```{r}
+
+# Load results:
+scores <- read.table(here("results","PRS","4_PRS_calculation","PRS.sscore"))
+colnames(scores)<- c("IID", "NMISS_ALLELE_CT",  "ALLELE_DOSAGE_SUM",    "SCORE1_AVG")
+
+#Rescale the scores
+scores$SCORE1_AVG_scale <- scale(scores$SCORE1_AVG, center = T, scale = T)
+
+```
+
+```{r merge score with sample type}
+scores_samples<-merge(scores,samples,by.x="IID",by.y="ID",all=FALSE)
+
+```
+
+```{r}
+ttest<-t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)
+tpval<- t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)$p.value
+tpval  
+
+```
+
+
+```{r}
+
+# Histogram:
+histo <- ggplot(scores_samples, aes(x = SCORE1_AVG_scale))+ 
+  geom_histogram(aes(y=..density.. ,fill = tipo_cancer, color = tipo_cancer), alpha = 0.5, position = "identity") +
+  scale_fill_manual( values = c("steelblue4", "gray87")) +
+   scale_color_manual(values = c("steelblue4", "gray50"))+
+   theme_classic()+
+  xlab("Polygenic risk score (PRS)") + 
+  ylab("Density")+
+ 
+  #labs(fill="xyz")+
+   labs(title = "Colorectal cancer", subtitle = "p <0.0001 ")+
+   theme(text = element_text(size = 16),
+         legend.position = "bottom") +
+theme(legend.title=element_blank())
+
+histo
+```
+
+```{r}
+# Density plot
+density <- ggplot(scores_samples, aes(x = SCORE1_AVG_scale, color = tipo_cancer))+ 
+  geom_density()+
+  scale_color_manual(values=c("#99B1C4", "gray50"))+
+   labs(title = "Risk score distribution",
+              #subtitle = "Plot of length by dose",
+              caption = paste0("t-test pval=",tpval))+
+   theme_minimal()+
+  theme(text = element_text(size = 20)) 
+
+density
+```
+
+
+```{r}
+# Boxplot
+boxplot <- ggplot(scores_samples, aes(x=tipo_cancer, y=SCORE1_AVG_scale, fill=tipo_cancer)) +
+  geom_boxplot()+
+  labs(x="", y = "Risk Score")+
+  scale_x_discrete(limits=c("Control", "Colorectal"))+
+  scale_fill_manual(values=c("#99B1C4", "gray87"))+
+  theme_classic()+
+  theme(text = element_text(size = 20), legend.position = "none") 
+
+boxplot
+
+```
+

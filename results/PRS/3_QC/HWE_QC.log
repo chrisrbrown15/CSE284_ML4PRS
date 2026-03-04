@@ -1,0 +1,24 @@
+PLINK v2.0.0-a.7 64-bit (28 Feb 2026)
+Options in effect:
+  --hwe 1e-6
+  --out results/PRS/3_QC/HWE_QC
+  --pfile results/PRS/1_snps_extraction/raw_data
+  --write-snplist
+
+Hostname: DESKTOP-Q6KBG6N
+Working directory: C:\Users\Zaid\Documents\CSE284_ML4PRS
+Start time: Tue Mar 03 01:12:51 2026
+
+Random number seed: 1772529171
+11615 MiB RAM detected; reserving 5807 MiB for main workspace.
+Using up to 4 compute threads.
+4104 samples (0 females, 0 males, 4104 ambiguous; 4104 founders) loaded from
+results/PRS/1_snps_extraction/raw_data.psam.
+205 variants loaded from results/PRS/1_snps_extraction/raw_data.pvar.
+Note: No phenotype data present.
+Calculating allele frequencies... done.
+--hwe: 0 variants removed due to Hardy-Weinberg exact test (founders only).
+205 variants remaining after main filters.
+--write-snplist: Variant IDs written to results/PRS/3_QC/HWE_QC.snplist .
+
+End time: Tue Mar 03 01:12:51 2026

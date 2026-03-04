@@ -1,0 +1,31 @@
+PLINK v2.0.0-a.7 64-bit (28 Feb 2026)
+Options in effect:
+  --exclude results/PRS/3_QC/to_remove.txt
+  --maf 0.005
+  --make-pgen
+  --out results/PRS/3_QC/dataQC
+  --pfile results/PRS/1_snps_extraction/raw_data
+  --write-snplist
+
+Hostname: DESKTOP-Q6KBG6N
+Working directory: C:\Users\Zaid\Documents\CSE284_ML4PRS
+Start time: Tue Mar 03 01:26:41 2026
+
+Random number seed: 1772530001
+11615 MiB RAM detected; reserving 5807 MiB for main workspace.
+Using up to 4 compute threads.
+4104 samples (0 females, 0 males, 4104 ambiguous; 4104 founders) loaded from
+results/PRS/1_snps_extraction/raw_data.psam.
+205 variants loaded from results/PRS/1_snps_extraction/raw_data.pvar.
+Note: No phenotype data present.
+--exclude: 199 variants remaining.
+Calculating allele frequencies... done.
+0 variants removed due to allele frequency threshold(s)
+(--maf/--max-maf/--mac/--max-mac).
+199 variants remaining after main filters.
+--write-snplist: Variant IDs written to results/PRS/3_QC/dataQC.snplist .
+Writing results/PRS/3_QC/dataQC.psam ... done.
+Writing results/PRS/3_QC/dataQC.pvar ... done.
+Writing results/PRS/3_QC/dataQC.pgen ... done.
+
+End time: Tue Mar 03 01:26:41 2026
