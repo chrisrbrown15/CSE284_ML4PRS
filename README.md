@@ -23,14 +23,12 @@ make [bcftool-1.23](https://www.htslib.org/download/) into tools/bcftools. Execu
 
 ### Results
 
-To evaluate the effectiveness of the constructed Polygenic Risk Score (PRS), we examined the distribution of PRS values across individuals and compared PRS levels between colorectal cancer (CRC) cases and controls.
+To evaluate the performance of the constructed PRS, we examined the distribution of PRS values across subjects CRC cases and controls.
 
-The histogram below illustrates the overall distribution of PRS values in the dataset. The distribution provides a view of how genetic risk is spread across the population and helps identify whether individuals with CRC tend to cluster at higher PRS values.
-
+The histogram below illustrates the overall distribution of PRS values in the dataset. The average value of standaraized PRS was higher in CRC cases compared to controls, indicating that the PRS captures genetic risk differences associated with colorectal cancer susceptibility.
 ![PRS Histogram](results/figures/PRS_histogram.JPG)
 
-The boxplot compares PRS values between CRC cases and controls. Individuals diagnosed with CRC generally show higher PRS values than controls, indicating that the PRS captures genetic risk differences associated with colorectal cancer susceptibility.
+The boxplot compares PRS values between CRC cases and controls. Individuals diagnosed with CRC generally show higher PRS values than controls
 
 ![PRS Boxplot](results/figures/PRS_boxplot.JPG)
 
-These results suggest that the PRS provides measurable separation between cases and controls, supporting its potential usefulness as a genetic risk indicator for colorectal cancer. Further evaluation using machine learning models will determine whether predictive performance can be improved beyond the baseline PRS model.
