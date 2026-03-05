@@ -298,6 +298,12 @@ write.table(scores_samples,here("results","PRS","4_PRS_calculation","score_final
 ```
 
 ```{r}
+
+```
+
+
+
+```{r}
 ttest<-t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)
 tpval<- t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)$p.value
 tpval  
@@ -308,19 +314,24 @@ tpval
 ```{r}
 
 # Histogram:
-histo <- ggplot(scores_samples, aes(x = SCORE1_AVG_scale))+ 
-  geom_histogram(aes(y=..density.. ,fill = tipo_cancer, color = tipo_cancer), alpha = 0.5, position = "identity") +
-  scale_fill_manual( values = c("steelblue4", "gray87")) +
-   scale_color_manual(values = c("steelblue4", "gray50"))+
-   theme_classic()+
+histo <- scores_samples %>% 
+  ggplot(aes(x = SCORE1_AVG_scale)) + 
+  geom_histogram(
+    aes(y = after_stat(density), fill = tipo_cancer, color = tipo_cancer),
+    alpha = 0.5,
+    position = "identity"
+  ) +
+  scale_fill_manual(values = c("red", "gray87"), labels = c("Cases", "Controls")) +
+  scale_color_manual(values = c("red", "gray50"), labels = c("Cases", "Controls")) +
+  theme_classic() +
   xlab("Polygenic risk score (PRS)") + 
-  ylab("Density")+
- 
-  #labs(fill="xyz")+
-   labs(title = "Colorectal cancer", subtitle = "p <0.0001 ")+
-   theme(text = element_text(size = 16),
-         legend.position = "bottom") +
-theme(legend.title=element_blank())
+  ylab("Density") +
+  labs(title = "Colorectal cancer", subtitle = "p < 0.01") +
+  theme(
+    text = element_text(size = 16),
+    legend.position = "bottom",
+    legend.title = element_blank()
+  )
 
 histo
 ```
@@ -341,14 +352,17 @@ density
 
 
 ```{r}
-# Boxplot
-boxplot <- ggplot(scores_samples, aes(x=tipo_cancer, y=SCORE1_AVG_scale, fill=tipo_cancer)) +
-  geom_boxplot()+
-  labs(x="", y = "Risk Score")+
-  scale_x_discrete(limits=c("Control", "Colorectal"))+
-  scale_fill_manual(values=c("#99B1C4", "gray87"))+
-  theme_classic()+
-  theme(text = element_text(size = 20), legend.position = "none") 
+
+boxplot <- ggplot(scores_samples, aes(x = tipo_cancer, y = SCORE1_AVG_scale, fill = tipo_cancer)) +
+  geom_boxplot() +
+  labs(x = "", y = "Polygenic risk score (PRS)") +
+  scale_x_discrete(
+    limits = c("Control", "Colorectal"),
+    labels = c("Controls", "Cases")
+  ) +
+  scale_fill_manual(values = c("red", "gray87")) +
+  theme_classic() +
+  theme(text = element_text(size = 20), legend.position = "none")
 
 boxplot
 
