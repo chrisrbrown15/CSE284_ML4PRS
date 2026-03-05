@@ -4,6 +4,32 @@
 
 data source: https://odap-ico.github.io/PRS_tutorial/#whats-a-polygenic-risk-score
 
+### Repository Structure
+
+- **data/**
+  - **raw/** – Original genotype and phenotype datasets
+  - **processed/** – Cleaned and prepared datasets used for modeling
+
+- **notebooks/**
+  - **Data Preprocessing and PRS/Data Preprocessing and PRS.Rmd** – R Markdown notebook for data preprocessing and PRS code generation
+  - **models.ipynb** – Machine learning models
+
+- **results/**
+  - **figures/** – Generated plots and visualizations (PRS distributions, model comparisons)
+  - **PRS/** – Intermediate and final outputs from the PRS construction pipeline  
+    - **1_snps_extraction/** – Extract SNPs from genotype data  
+    - **2_SNPs_alignament_check/** – Check and align alleles with GWAS effect sizes  
+    - **3_QC/** – Quality control filtering and variant checks  
+    - **4_PRS_calculation/** – Final PRS computation outputs
+  - **tables/** – Model performance tables and summary statistics
+
+- **scripts/** – Python code for data cleaning and quality control
+
+- **tools/**
+  - **bcftools/** – bcftools used for processing VCF genotype files
+  - **plink2/** – PLINK2  used for genotype processing and PRS calculation
+
+
 ### Background
 
 Colorectal cancer (CRC) is the third most diagnosed cancer in the world and accounted for 9.4% of cancer-related deaths in 2020. It is estimated that the global incidence of CRC will more than double by 2035. CRC occurs exclusively in the colon or rectum. Currently, the most effective method of preventing and managing CRC is screening average-risk individuals. Current known CRC risk factors include family history of CRC, inflammatory bowel diseases, obesity, smoking, consumption of red meats, alcohol consumption, and tobacco use. Over two hundred single-nucleotide polymorphisms (SNPs) have been implicated as causal or protective for CRC. In this study, we aim to build a polygenic risk score (PRS) for CRC and compare its discrimination with that of machine learning (ML) models to identify patients with CRC.
@@ -36,11 +62,7 @@ The boxplot compares PRS values between CRC cases and controls. Individuals diag
 ### Model Performance
 
 
-
-
-### Model Performance
-
-We evaluated the baseline PRS logistic model and three machine learning models using effect allele counts.
+We evaluated the baseline PRS logistic model and three machine learning models using effect allele counts as predictors.
 
 | Model | PR_AUC | F1 Score | ROC_AUC | Precision | Recall (Sensitivity) | Specificity | Accuracy | Balanced Accuracy | Balanced Accuracy (CV) | Log Loss |
 |------|------|------|------|------|------|------|------|------|------|------|
