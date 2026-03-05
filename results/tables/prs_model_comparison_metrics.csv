@@ -1,0 +1,4 @@
+Model,PR_AUC,F1_Score,ROC_AUC,Precision,Recall_Sensitivity,Specificity,Accuracy,Balanced Accuracy,Balanced Accuracy during CV,Log Loss
+Tuned PyTorch NN,0.3827,0.4294,0.4446,0.3706,0.5105,0.5105,0.5483,0.5388,0.5529207219035115,1.2466
+Logistic Regression,0.2973,0.4531,0.5712,0.3948,0.5315,0.5315,0.5728,0.5624,0.5564170258108095,0.693
+Random Forest,0.2952,0.3361,0.566,0.4133,0.2832,0.2832,0.6275,0.5413,0.5382467106202016,0.6835
