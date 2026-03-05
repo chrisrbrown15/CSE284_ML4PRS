@@ -32,3 +32,15 @@ The boxplot compares PRS values between CRC cases and controls. Individuals diag
 
 ![PRS Boxplot](results/figures/PRS_boxplot.JPG)
 
+
+### Model Performance
+
+We evaluated three machine learning models using effect alleles counts derived from GWAS effect studies. Due to class imbalance, performance was assessed using precision–recall AUC (PR_AUC), F1-score, ROC-AUC, and balanced accuracy.
+
+| Model | PR_AUC | F1 Score | ROC_AUC | Precision | Recall (Sensitivity) | Specificity | Accuracy | Balanced Accuracy | Balanced Accuracy (CV) | Log Loss |
+|------|------|------|------|------|------|------|------|------|------|------|
+| Tuned PyTorch NN | 0.3827 | 0.4294 | 0.4446 | 0.3706 | 0.5105 | 0.5105 | 0.5483 | 0.5388 | 0.5529 | 1.2466 |
+| Logistic Regression | 0.2973 | 0.4531 | 0.5712 | 0.3948 | 0.5315 | 0.5315 | 0.5728 | 0.5624 | 0.5564 | 0.6930 |
+| Random Forest | 0.2952 | 0.3361 | 0.5660 | 0.4133 | 0.2832 | 0.2832 | 0.6275 | 0.5413 | 0.5382 | 0.6835 |
+
+Overall, logistic regression achieved the highest ROC-AUC (0.5712) and balanced accuracy (0.5624).
