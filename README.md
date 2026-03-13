@@ -7,28 +7,27 @@ data source: https://odap-ico.github.io/PRS_tutorial/#whats-a-polygenic-risk-sco
 ### Repository Structure
 
 - **data/**
+
   - **raw/** – Original genotype and phenotype datasets
   - **processed/** – Cleaned and prepared datasets used for modeling
-
 - **notebooks/**
+
   - **Data Preprocessing and PRS/Data Preprocessing and PRS.Rmd** – R Markdown notebook for data preprocessing and PRS code generation
   - **models.ipynb** – Machine learning models
-
 - **results/**
+
   - **figures/** – Generated plots and visualizations (PRS distributions, model comparisons)
-  - **PRS/** – Intermediate and final outputs from the PRS construction pipeline  
-    - **1_snps_extraction/** – Extract SNPs from genotype data  
-    - **2_SNPs_alignament_check/** – Check and align alleles with GWAS effect sizes  
-    - **3_QC/** – Quality control filtering and variant checks  
+  - **PRS/** – Intermediate and final outputs from the PRS construction pipeline
+    - **1_snps_extraction/** – Extract SNPs from genotype data
+    - **2_SNPs_alignament_check/** – Check and align alleles with GWAS effect sizes
+    - **3_QC/** – Quality control filtering and variant checks
     - **4_PRS_calculation/** – Final PRS computation outputs
   - **tables/** – Model performance tables and summary statistics
-
 - **scripts/** – Python code for data cleaning and quality control
-
 - **tools/**
+
   - **bcftools/** – bcftools used for processing VCF genotype files
   - **plink2/** – PLINK2  used for genotype processing and PRS calculation
-
 
 ### Background
 
@@ -45,7 +44,13 @@ The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for e
 ### Requirements
 
 [plink2](https://www.cog-genomics.org/plink/2.0/) binary appropriate for your processor architecture must be placed in tools/plink2/ directory.
-make [bcftool-1.23](https://www.htslib.org/download/) into tools/bcftools. Executable should be at tools/bcftools/bin/bcftools
+
+[bcftool-1.23](https://www.htslib.org/download/) into tools/bcftools. Executable should be at tools/bcftools/bin/bcftools
+
+create a conda environment with necessary dependencies using the environment.yaml file
+```
+conda env create -f environment.yaml
+```
 
 ### Results
 
@@ -58,15 +63,13 @@ The boxplot compares PRS values between CRC cases and controls. Individuals diag
 
 ![PRS Boxplot](results/figures/PRS_boxplot.JPG)
 
-
 ### Model Performance
-
 
 We evaluated the baseline PRS logistic model and three machine learning models using effect allele counts as predictors.
 
-| Model | F1 Score | ROC_AUC | Precision | Recall (Sensitivity) | Specificity | Balanced Accuracy |
-|------|------|------|------|------|------|------|
-| **Baseline PRS Logistic Model** | **0.463** | **0.617** | **0.385** | **0.581** | 0.599 | **0.590** |
-| Neural Network | 0.352 | 0.409 | 0.371 | 0.335 | 0.754 | 0.544 |
-| Logistic Regression | 0.419 | 0.583 | 0.356 | 0.508 | 0.602 | 0.555 |
-| Random Forest | 0.273 | 0.564 | 0.367 | 0.218 | **0.834** | 0.528 |
+| Model                                 | F1 Score        | ROC_AUC         | Precision       | Recall (Sensitivity) | Specificity     | Balanced Accuracy |
+| ------------------------------------- | --------------- | --------------- | --------------- | -------------------- | --------------- | ----------------- |
+| **Baseline PRS Logistic Model** | **0.463** | **0.617** | **0.385** | **0.581**      | 0.599           | **0.590**   |
+| Neural Network                        | 0.352           | 0.409           | 0.371           | 0.335                | 0.754           | 0.544             |
+| Logistic Regression                   | 0.419           | 0.583           | 0.356           | 0.508                | 0.602           | 0.555             |
+| Random Forest                         | 0.273           | 0.564           | 0.367           | 0.218                | **0.834** | 0.528             |
