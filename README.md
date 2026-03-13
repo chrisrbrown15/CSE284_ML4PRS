@@ -64,11 +64,9 @@ The boxplot compares PRS values between CRC cases and controls. Individuals diag
 
 We evaluated the baseline PRS logistic model and three machine learning models using effect allele counts as predictors.
 
-| Model | PR_AUC | F1 Score | ROC_AUC | Precision | Recall (Sensitivity) | Specificity | Accuracy | Balanced Accuracy | Balanced Accuracy (CV) | Log Loss |
-|------|------|------|------|------|------|------|------|------|------|------|
-| **Baseline PRS Logistic Model** | 0.4175 | 0.1107 | 0.6259 | 0.5714 | 0.0613 | 0.9801 | 0.7025 | 0.5207 | — | — |
-| Tuned PyTorch NN | 0.3827 | 0.4294 | 0.4446 | 0.3706 | 0.5105 | 0.5105 | 0.5483 | 0.5388 | 0.5529 | 1.2466 |
-| Logistic Regression | 0.2973 | 0.4531 | 0.5712 | 0.3948 | 0.5315 | 0.5315 | 0.5728 | 0.5624 | 0.5564 | 0.6930 |
-| Random Forest | 0.2952 | 0.3361 | 0.5660 | 0.4133 | 0.2832 | 0.2832 | 0.6275 | 0.5413 | 0.5382 | 0.6835 |
-
-
+| Model | F1 Score | ROC_AUC | Precision | Recall (Sensitivity) | Specificity | Balanced Accuracy |
+|------|------|------|------|------|------|------|
+| **Baseline PRS Logistic Model** | **0.463** | **0.617** | **0.385** | **0.581** | 0.599 | **0.590** |
+| Neural Network | 0.352 | 0.409 | 0.371 | 0.335 | 0.754 | 0.544 |
+| Logistic Regression | 0.419 | 0.583 | 0.356 | 0.508 | 0.602 | 0.555 |
+| Random Forest | 0.273 | 0.564 | 0.367 | 0.218 | **0.834** | 0.528 |
