@@ -9,6 +9,14 @@ date: "2026-03-03"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r install packages}
+
+install.packages('data.table')
+install.packages('readxl')
+install.packages('here')
+install.packages('tidyverse')
+```
+
 
 ```{r Load libraries}
 library(data.table)
@@ -34,14 +42,9 @@ samples<-read.table(here("data","raw","GenRisk_ImputedData_CRC_Samples.txt"),hea
 ```{r PLINK2 conversion}
 
 #Convert VCF to PLINK2 format
-mkdir -p results/PRS/1_snps_extraction 
+system("mkdir -p results/PRS/1_snps_extraction")
 
-plink2 --vcf data/processed/GenRisk_all_CRC_SNPs_perm.clean.vcf.gz \
---new-id-max-allele-len 50 \
---set-all-var-ids @:#_\$r_\$a \
---freq \
---make-pgen \
---out results/PRS/1_snps_extraction/raw_data
+system("plink2 --vcf data/processed/GenRisk_all_CRC_SNPs_perm.clean.vcf.gz --new-id-max-allele-len 50 --set-all-var-ids @:#_\\$r_\\$a --freq --make-pgen --out results/PRS/1_snps_extraction/raw_data")
 
 
 ```
@@ -118,20 +121,17 @@ write.table(ambiguous_snps, here("results","PRS","2_SNPs_alignament_check","excl
 pvar$INFO2 <- sub("ER2=.*", "", pvar$INFO)
 pvar$R2 <- as.numeric(sub('.*R2=([0-9.]+);.*', '\\1', pvar$INFO2))
 
-# Extraction of SNPs with low INFO:
+# Extraction of SNPs with low R sqaured < 0.4:
 r2_04_remove <- pvar[pvar$R2 < 0.4,]
 r2_04_remove
 
 ```
 
 
-```{r}
-mkdir -p results/PRS/3_QC
+```{r LD pruning}
+system("mkdir -p results/PRS/3_QC")
 
-plink2 \
-    --pfile results/PRS/1_snps_extraction/raw_data \
-    --indep-pairwise 200 1 0.3 \
-    --out results/PRS/3_QC/LD
+system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --indep-pairwise 200 1 0.3 --out results/PRS/3_QC/LD")
 ```
 
 ```{r Load LD exclusion SNPs}
@@ -142,13 +142,9 @@ ld_snps <- ld_snps$V1
 ```
 
 
-```{r}
+```{r Hardy–Weinberg equilibrium test}
 
-plink2 \
-    --pfile results/PRS/1_snps_extraction/raw_data \
-    --hwe 1e-6 \
-    --write-snplist \
-    --out results/PRS/3_QC/HWE_QC
+system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --hwe 1e-6 --write-snplist --out results/PRS/3_QC/HWE_QC")
 
 ```
 
@@ -174,13 +170,7 @@ write.table(to_remove, here("results","PRS","3_QC","to_remove.txt"), quote = FAL
 
 ```{r Filtering of SNPs with PLINK2}
 
-plink2 \
---pfile  results/PRS/1_snps_extraction/raw_data \
---exclude results/PRS/3_QC/to_remove.txt \
---maf 0.005 \
---write-snplist \
---make-pgen \
---out results/PRS/3_QC/dataQC
+system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --exclude results/PRS/3_QC/to_remove.txt --maf 0.005 --write-snplist --make-pgen --out results/PRS/3_QC/dataQC")
 
 ```
 
@@ -191,8 +181,6 @@ PRS Calculation
 snps_qc<-read.table(here("results","PRS","3_QC","dataQC.pvar"))
 colnames(snps_qc) <- c("CHROM", "POS",  "ID", "REF", "ALT", "FILTER", "INFO")
 
-#Transform ID to: chr:position_all_1:all_2 format
-#snps_qc$ID <- gsub("_",":",snps_qc$ID)
 
 #Keep ID and ALT / RISK_ALLELE
 names(snps_qc)[names(snps_qc) == "ALT"] <- "RISK_ALLELE"
@@ -261,19 +249,11 @@ write.table(score,here("results","PRS","4_PRS_calculation","score_final.txt"), c
 ```{r}
 
 #Generate PRS using PLINK
-plink2 \
---pfile results/PRS/1_snps_extraction/raw_data \
---extract results/PRS/3_QC/dataQC.snplist \
---score results/PRS/4_PRS_calculation/score_final.txt no-mean-imputation \
---out results/PRS/4_PRS_calculation/PRS
+system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --extract results/PRS/3_QC/dataQC.snplist --score results/PRS/4_PRS_calculation/score_final.txt no-mean-imputation --out results/PRS/4_PRS_calculation/PRS")
 
 #Generate effect allele count per SNP per subject
-plink2 \
-  --pfile results/PRS/1_snps_extraction/raw_data \
-  --extract results/PRS/3_QC/dataQC.snplist \
-  --a1-allele results/PRS/4_PRS_calculation/score_final.txt 1 2 \
-  --export A \
-  --out results/PRS/4_PRS_calculation/effect_allele_counts
+system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --extract results/PRS/3_QC/dataQC.snplist --a1-allele results/PRS/4_PRS_calculation/score_final.txt 1 2 --export A --out results/PRS/4_PRS_calculation/effect_allele_counts")
+
 
 ```
 
@@ -297,13 +277,10 @@ write.table(scores_samples,here("results","PRS","4_PRS_calculation","score_final
 
 ```
 
-```{r}
-
-```
 
 
-
-```{r}
+```{r t-test}
+by(scores_samples$SCORE1_AVG_scale,scores_samples$tipo_cancer,summary)
 ttest<-t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)
 tpval<- t.test(scores_samples$SCORE1_AVG_scale~scores_samples$tipo_cancer)$p.value
 tpval  
@@ -326,7 +303,7 @@ histo <- scores_samples %>%
   theme_classic() +
   xlab("Polygenic risk score (PRS)") + 
   ylab("Density") +
-  labs(title = "Colorectal cancer", subtitle = "p < 0.01") +
+  labs(title = "Colorectal cancer", subtitle = "p < 0.001") +
   theme(
     text = element_text(size = 16),
     legend.position = "bottom",
