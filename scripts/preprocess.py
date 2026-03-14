@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 """
-This script cleans up genotypes by removing invalid genotypes from raw vcf.
+This script cleans up vcf by removing samples with invalid genotypes.
 
 Script should be run from inside the scripts folder.
 
