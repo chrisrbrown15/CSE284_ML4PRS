@@ -43,20 +43,47 @@ The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for e
 
 ### Requirements
 
-[plink2](https://www.cog-genomics.org/plink/2.0/) binary appropriate for your processor architecture must be placed in tools/plink2/ directory.
-- i.e tools/plink2/plink2
+- [plink2](https://www.cog-genomics.org/plink/2.0/)
+- R 4.5.2
+- conda >= 25.5.1
+- JupyterLab
 
-create a conda environment with necessary dependencies using the environment.yaml file
+### Steps to Run Analysis Pipeline
 
-```
+#### Install Dependencies
+
+If not already installed, download and install plink2 and R 4.5.2.  
+
+Create a conda environment with necessary python dependencies using the environment.yaml file
+
+```python
 conda env create -f environment.yaml
 ```
 
-### Running PRS and ML Models
+#### Clean Genotypes
 
-**Instructions for running plink and R**
+Clean up raw genotypes using preprocessing script to remove samples with invalid genotypes.
 
+```bash
+cd scripts
+python preprocess.py  # run from within scripts folder
+```
 
+#### SNP QC & PRS
+
+Perform Quality Control on SNPs and Calculate PRS using PLINK and R
+
+```bash
+Rscript Data\ Preprocessing\ and\ PRS.Rmd
+```
+
+#### Evaluate Machine Learning Models
+
+Train ML models and compare to baseline by running Jupyter Notebooks
+
+```bash
+jupyter notebook notebooks/models.ipynb
+```
 
 ### Results
 
