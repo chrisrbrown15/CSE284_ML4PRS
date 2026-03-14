@@ -41,6 +41,8 @@ samples<-read.table(here("data","raw","GenRisk_ImputedData_CRC_Samples.txt"),hea
 
 ```{r PLINK2 conversion}
 
+setwd(here::here())
+
 #Convert VCF to PLINK2 format
 system("mkdir -p results/PRS/1_snps_extraction")
 
@@ -129,6 +131,9 @@ r2_04_remove
 
 
 ```{r LD pruning}
+
+setwd(here::here())
+
 system("mkdir -p results/PRS/3_QC")
 
 system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --indep-pairwise 200 1 0.3 --out results/PRS/3_QC/LD")
@@ -143,6 +148,8 @@ ld_snps <- ld_snps$V1
 
 
 ```{r Hardy–Weinberg equilibrium test}
+
+setwd(here::here())
 
 system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --hwe 1e-6 --write-snplist --out results/PRS/3_QC/HWE_QC")
 
@@ -169,6 +176,8 @@ write.table(to_remove, here("results","PRS","3_QC","to_remove.txt"), quote = FAL
 
 
 ```{r Filtering of SNPs with PLINK2}
+
+setwd(here::here())
 
 system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --exclude results/PRS/3_QC/to_remove.txt --maf 0.005 --write-snplist --make-pgen --out results/PRS/3_QC/dataQC")
 
@@ -247,6 +256,7 @@ write.table(score,here("results","PRS","4_PRS_calculation","score_final.txt"), c
 
 
 ```{r}
+setwd(here::here())
 
 #Generate PRS using PLINK
 system("plink2 --pfile results/PRS/1_snps_extraction/raw_data --extract results/PRS/3_QC/dataQC.snplist --score results/PRS/4_PRS_calculation/score_final.txt no-mean-imputation --out results/PRS/4_PRS_calculation/PRS")
