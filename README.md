@@ -24,10 +24,6 @@ data source: https://odap-ico.github.io/PRS_tutorial/#whats-a-polygenic-risk-sco
     - **4_PRS_calculation/** – Final PRS computation outputs
   - **tables/** – Model performance tables and summary statistics
 - **scripts/** – Python code for data cleaning and quality control
-- **tools/**
-
-  - **bcftools/** – bcftools used for processing VCF genotype files
-  - **plink2/** – PLINK2  used for genotype processing and PRS calculation
 
 ### Background
 
@@ -52,7 +48,7 @@ The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for e
 
 #### Install Dependencies
 
-If not already installed, download and install plink2 and R 4.5.2.  
+If not already installed, download and install plink2 and R 4.5.2.
 
 Create a conda environment with necessary python dependencies using the environment.yaml file
 
