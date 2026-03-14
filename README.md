@@ -70,7 +70,7 @@ python preprocess.py  # run from within scripts folder
 Perform Quality Control on SNPs and Calculate PRS using PLINK and R
 
 ```bash
-Rscript Data\ Preprocessing\ and\ PRS.Rmd
+Rscript -e "rmarkdown::render('notebooks/Data Preprocessing and PRS/Data Preprocessing and PRS.Rmd')"
 ```
 
 #### Evaluate Machine Learning Models
