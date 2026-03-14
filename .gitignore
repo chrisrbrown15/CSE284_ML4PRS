@@ -7,3 +7,4 @@ tools/bcftools/*
 .RData
 .Rproj.user
 *.vscode
+*.DS_store
