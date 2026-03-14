@@ -69,7 +69,7 @@ We evaluated the baseline PRS logistic model and three machine learning models u
 
 | Model                                 | F1 Score        | ROC_AUC         | Precision       | Recall (Sensitivity) | Specificity     | Balanced Accuracy |
 | ------------------------------------- | --------------- | --------------- | --------------- | -------------------- | --------------- | ----------------- |
-| **Baseline PRS Logistic Model** | **0.463** | **0.617** | **0.385** | **0.581**      | 0.599           | **0.590**   |
-| Neural Network                        | 0.352           | 0.409           | 0.371           | 0.335                | 0.754           | 0.544             |
+| **Baseline PRS Logistic Model**       | **0.463**       | **0.617**       | **0.385**       | **0.581**            | 0.599           | **0.590**         |
+| Neural Network                        | 0.426           | 0.568           | 0.366           | 0.508                | 0.620           | 0.564             |
 | Logistic Regression                   | 0.419           | 0.583           | 0.356           | 0.508                | 0.602           | 0.555             |
-| Random Forest                         | 0.273           | 0.564           | 0.367           | 0.218                | **0.834** | 0.528             |
+| Random Forest                         | 0.273           | 0.564           | 0.367           | 0.218                | **0.834**       | 0.528             |
