@@ -39,18 +39,24 @@ This study employs a case–control design to evaluate the performance of a PRS 
 
 ### Methods
 
-The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for effect sizes 𝛽 from GWAS and genotypes 𝑋𝑖 for individual 𝑖. The PRS will be transformed into a probability score through logistic regression by learning values of 𝛾0 and 𝛾1 for 𝐿𝑜𝑔𝑖𝑡(𝑃𝑖) = 𝛾0 + 𝛾1( 𝛽𝑇 𝑋𝑖). To compare against the baseline PRS model, we will utilize logistic regression, random forest, and neural network models to predict CRC status using weighted genotypes as features. Genotypes will be encoded as effect allele dosages {0,1,2}, representing the number of effect alleles carried by an individual at each SNP. Class-weighting will be used during training. Regularization will be utilized to prevent overfitting. Data will be split into train, validation, and test sets. Due to class imbalance, model performance will be evaluated using F1-score and precision-recall AUC.
+The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for effect sizes 𝛽 from GWAS and genotypes 𝑋𝑖 for individual 𝑖. The PRS will be transformed into a probability score through logistic regression by learning values of 𝛾0 and 𝛾1 for 𝐿𝑜𝑔𝑖𝑡(𝑃𝑖) = 𝛾0 + 𝛾1( 𝛽𝑇 𝑋𝑖). To compare against the baseline PRS model, we will utilize logistic regression, random forest, and neural network models to predict CRC status using weighted genotypes as features. Genotypes will be encoded as effect allele dosages {0,1,2}, representing the number of effect alleles carried by an individual at each SNP. Class-weighting will be used during training. Regularization will be utilized to prevent overfitting. Data will be split into train, validation, and test sets. Due to class imbalance, model performance will be evaluated using F1-score.
 
 ### Requirements
 
 [plink2](https://www.cog-genomics.org/plink/2.0/) binary appropriate for your processor architecture must be placed in tools/plink2/ directory.
-
-[bcftool-1.23](https://www.htslib.org/download/) into tools/bcftools. Executable should be at tools/bcftools/bin/bcftools
+- i.e tools/plink2/plink2
 
 create a conda environment with necessary dependencies using the environment.yaml file
+
 ```
 conda env create -f environment.yaml
 ```
+
+### Running PRS and ML Models
+
+**Instructions for running plink and R**
+
+
 
 ### Results
 
@@ -69,7 +75,7 @@ We evaluated the baseline PRS logistic model and three machine learning models u
 
 | Model                                 | F1 Score        | ROC_AUC         | Precision       | Recall (Sensitivity) | Specificity     | Balanced Accuracy |
 | ------------------------------------- | --------------- | --------------- | --------------- | -------------------- | --------------- | ----------------- |
-| **Baseline PRS Logistic Model**       | **0.463**       | **0.617**       | **0.385**       | **0.581**            | 0.599           | **0.590**         |
+| **Baseline PRS Logistic Model** | **0.463** | **0.617** | **0.385** | **0.581**      | 0.599           | **0.590**   |
 | Neural Network                        | 0.426           | 0.568           | 0.366           | 0.508                | 0.620           | 0.564             |
 | Logistic Regression                   | 0.419           | 0.583           | 0.356           | 0.508                | 0.602           | 0.555             |
-| Random Forest                         | 0.273           | 0.564           | 0.367           | 0.218                | **0.834**       | 0.528             |
+| Random Forest                         | 0.273           | 0.564           | 0.367           | 0.218                | **0.834** | 0.528             |
