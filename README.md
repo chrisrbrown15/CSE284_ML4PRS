@@ -48,7 +48,7 @@ The baseline PRS will be defined as 𝑃𝑅𝑆𝑖 = (𝛽𝑇 𝑋𝑖) for e
 
 #### Install Dependencies
 
-If not already installed, download and install plink2 and R 4.5.2.
+If not already installed, download and install plink2, R 4.5.2, conda, and JupyterLab.
 
 Create a conda environment with necessary python dependencies using the environment.yaml file
 
